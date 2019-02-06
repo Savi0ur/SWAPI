@@ -11,6 +11,26 @@ public interface MainActivityView extends MvpView {
 
     void clearSearchInput();
 
-    void animateClearButton();
+    void animateClearBtn();
+
+    void animateSearchBtn();
+
+    void animatePostersImg();
+
+    void showPostersImg();
+
+    void hidePostersImg();
+
+    void showList();
+
+    void hideList();
+
+    void updateList();
+
+    void showProgressBar();
+
+    void hideProgressBar();
+
+    void hideKeyboard();
 
 }

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false">
+    <item android:drawable="@drawable/poster1" android:duration="5000" />
+    <item android:drawable="@drawable/poster2" android:duration="5000" />
+    <item android:drawable="@drawable/poster3" android:duration="5000" />
+    <item android:drawable="@drawable/poster4" android:duration="5000" />
+    <item android:drawable="@drawable/poster5" android:duration="5000" />
+</animation-list>

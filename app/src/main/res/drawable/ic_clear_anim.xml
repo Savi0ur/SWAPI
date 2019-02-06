@@ -16,7 +16,7 @@
                 <path
                     android:name="path"
                     android:pathData="M 19 6.41 L 17.59 5 L 12 10.59 L 6.41 5 L 5 6.41 L 10.59 12 L 5 17.59 L 6.41 19 L 12 13.41 L 17.59 19 L 19 17.59 L 13.41 12 Z"
-                    android:fillColor="#9E9E9E"/>
+                    android:fillColor="@color/colorAccent"/>
             </group>
         </vector>
     </aapt:attr>
@@ -26,16 +26,16 @@
                 <objectAnimator
                     android:propertyName="fillColor"
                     android:duration="250"
-                    android:valueFrom="#9E9E9E"
-                    android:valueTo="#ff4081"
+                    android:valueFrom="@color/colorAccent"
+                    android:valueTo="@color/colorPrimaryDark"
                     android:valueType="colorType"
                     android:interpolator="@android:interpolator/fast_out_slow_in"/>
                 <objectAnimator
                     android:propertyName="fillColor"
                     android:startOffset="250"
                     android:duration="250"
-                    android:valueFrom="#ff4081"
-                    android:valueTo="#9E9E9E"
+                    android:valueFrom="@color/colorPrimaryDark"
+                    android:valueTo="@color/colorAccent"
                     android:valueType="colorType"
                     android:interpolator="@android:interpolator/fast_out_slow_in"/>
             </set>

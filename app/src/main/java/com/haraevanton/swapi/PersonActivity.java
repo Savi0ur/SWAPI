@@ -2,6 +2,7 @@ package com.haraevanton.swapi;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -24,6 +25,8 @@ public class PersonActivity extends MvpAppCompatActivity implements PersonActivi
 
     @BindView(R.id.txt_person)
     TextView txtPerson;
+    @BindView(R.id.txt_person_name)
+    TextView txtPersonName;
 
     private Result result;
 
@@ -38,12 +41,21 @@ public class PersonActivity extends MvpAppCompatActivity implements PersonActivi
             result = (Result) arguments.getSerializable(EXTRA_RESULT);
         }
 
+        Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/DeathStar.otf");
+        txtPersonName.setTypeface(custom_font);
+        txtPersonName.setText(result.getName());
+
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Name: ").append(result.getName()).append("\n\n");
         stringBuilder.append("Height: ").append(result.getHeight()).append("\n");
         stringBuilder.append("Mass: ").append(result.getMass()).append("\n");
+        stringBuilder.append("Hair color: ").append(result.getHairColor()).append("\n");
+        stringBuilder.append("Skin color: ").append(result.getSkinColor()).append("\n");
+        stringBuilder.append("Eye color: ").append(result.getEyeColor()).append("\n");
+        stringBuilder.append("Gender: ").append(result.getGender()).append("\n");
         stringBuilder.append("Birth year: ").append(result.getBirthYear()).append("\n");
 
+        txtPerson.setTypeface(custom_font);
         txtPerson.setText(stringBuilder);
 
     }

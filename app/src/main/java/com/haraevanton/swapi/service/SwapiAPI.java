@@ -9,6 +9,6 @@ import retrofit2.http.Query;
 public interface SwapiAPI {
 
     @GET("people/")
-    Call<SwapiAnswer> getByName(@Query("search") String characterName);
+    Call<SwapiAnswer> getByName(@Query("page") int page, @Query("search") String characterName);
 
 }

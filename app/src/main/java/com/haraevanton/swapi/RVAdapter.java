@@ -2,6 +2,7 @@ package com.haraevanton.swapi;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -36,7 +37,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         viewHolder.txtName.setText(results.get(i).getName());
-        viewHolder.txtColors.setText(results.get(i).getSkinColor());
         viewHolder.bind(results.get(i));
         if (results.size() == 1){
             viewHolder.showPersonInfo(results.get(0));
@@ -56,8 +56,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder> {
         CardView cv;
         @BindView(R.id.txt_name)
         TextView txtName;
-        @BindView(R.id.txt_colors)
-        TextView txtColors;
 
         private Result result;
         private Context context;
@@ -66,6 +64,10 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder> {
             super(itemView);
             ButterKnife.bind(this, itemView);
             context = itemView.getContext();
+
+            Typeface custom_font = Typeface.createFromAsset(context.getAssets(), "fonts/DeathStar.otf");
+            txtName.setTypeface(custom_font);
+
         }
 
         public void bind (Result result){
