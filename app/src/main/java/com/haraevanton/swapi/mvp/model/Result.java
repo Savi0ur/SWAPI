@@ -1,10 +1,11 @@
-package com.haraevanton.swapi.model;
+package com.haraevanton.swapi.mvp.model;
 
+import java.io.Serializable;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Result {
+public class Result implements Serializable {
 
     @SerializedName("name")
     @Expose

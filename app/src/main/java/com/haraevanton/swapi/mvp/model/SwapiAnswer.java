@@ -1,4 +1,4 @@
-package com.haraevanton.swapi.model;
+package com.haraevanton.swapi.mvp.model;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;

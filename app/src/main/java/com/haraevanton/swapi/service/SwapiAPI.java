@@ -1,6 +1,6 @@
 package com.haraevanton.swapi.service;
 
-import com.haraevanton.swapi.model.SwapiAnswer;
+import com.haraevanton.swapi.mvp.model.SwapiAnswer;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
