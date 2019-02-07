@@ -2,7 +2,8 @@ package com.haraevanton.swapi.mvp.presenters;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
-import com.haraevanton.swapi.mvp.model.Result;
+import com.haraevanton.swapi.mvp.model.ResultRepository;
+import com.haraevanton.swapi.room.Result;
 import com.haraevanton.swapi.mvp.model.SwapiAnswer;
 import com.haraevanton.swapi.mvp.views.MainActivityView;
 import com.haraevanton.swapi.service.SwapiAPI;
@@ -17,14 +18,20 @@ import retrofit2.Response;
 @InjectViewState
 public class MainActivityPresenter extends MvpPresenter<MainActivityView> {
 
+    private ResultRepository resultRepository;
+
     private List<Result> results;
     private int pageCounter = 1;
     private int personsCounter = 0;
     private boolean isLoading;
+    private boolean historyMode;
+    private boolean screenMain;
     private String query;
 
     public MainActivityPresenter() {
         getViewState().animatePostersImg();
+
+        resultRepository = ResultRepository.get();
     }
 
     public void uploadData(int page, String characterName) {
@@ -37,7 +44,7 @@ public class MainActivityPresenter extends MvpPresenter<MainActivityView> {
             public void onResponse(Call<SwapiAnswer> call, Response<SwapiAnswer> response) {
                 if (response.body() != null) {
                     personsCounter = response.body().getCount();
-                    if (results == null){
+                    if (results == null) {
                         results = response.body().getResults();
                         getViewState().onGetDataSuccess(results);
                     } else {
@@ -59,10 +66,10 @@ public class MainActivityPresenter extends MvpPresenter<MainActivityView> {
 
     }
 
-    public void onRecyclerViewScrolled(int visibleItemCount, int totalItemCount, int firstVisibleItems){
+    public void onRecyclerViewScrolled(int visibleItemCount, int totalItemCount, int firstVisibleItems) {
 
-        if (!isLoading) {
-            if ((visibleItemCount+firstVisibleItems) >= totalItemCount-10){
+        if (!isLoading && !historyMode) {
+            if ((visibleItemCount + firstVisibleItems) >= totalItemCount - 10) {
                 if (results.size() < personsCounter) {
                     isLoading = true;
                     pageCounter++;
@@ -73,7 +80,14 @@ public class MainActivityPresenter extends MvpPresenter<MainActivityView> {
 
     }
 
-    public void onButtonSearchClick(String characterName){
+    public void addResultHistory(Result result) {
+        if (!resultRepository.isHaveSameResult(result.getName())) {
+            resultRepository.addResult(result);
+        }
+    }
+
+    public void onButtonSearchClick(String characterName) {
+        historyMode = false;
         getViewState().animateSearchBtn();
         query = characterName;
         if (results != null) {
@@ -86,15 +100,37 @@ public class MainActivityPresenter extends MvpPresenter<MainActivityView> {
         uploadData(pageCounter, characterName);
         getViewState().hidePostersImg();
         getViewState().showList();
+        getViewState().animateClearBtnToBack();
+        screenMain = false;
+
     }
 
-    public void onClearButtonClick(String query) {
-        if (!query.isEmpty()){
-            getViewState().clearSearchInput();
+    public void onClearButtonClick() {
+        historyMode = false;
+        query = "";
+        getViewState().clearSearchInput();
+        if (screenMain) {
             getViewState().animateClearBtn();
+        } else {
+            getViewState().animateBackBtnToClear();
+            screenMain = true;
         }
         getViewState().hideList();
         getViewState().showPostersImg();
+    }
+
+    public void onHistoryButtonClick() {
+        historyMode = true;
+        if (results != null) {
+            results.clear();
+        }
+        results = resultRepository.getResults();
+        getViewState().onGetDataSuccess(results);
+        getViewState().hidePostersImg();
+        getViewState().showList();
+        getViewState().clearSearchInput();
+        getViewState().animateClearBtnToBack();
+        screenMain = false;
     }
 
 }

@@ -1,15 +1,12 @@
 package com.haraevanton.swapi;
 
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.widget.TextView;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.haraevanton.swapi.R;
-import com.haraevanton.swapi.mvp.model.Result;
+import com.haraevanton.swapi.room.Result;
 import com.haraevanton.swapi.mvp.presenters.PersonActivityPresenter;
 import com.haraevanton.swapi.mvp.views.PersonActivityView;
 

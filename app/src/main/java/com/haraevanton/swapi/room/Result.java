@@ -1,12 +1,19 @@
-package com.haraevanton.swapi.mvp.model;
+package com.haraevanton.swapi.room;
+
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 import java.io.Serializable;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+@Entity
 public class Result implements Serializable {
 
+    @PrimaryKey
+    @NonNull
     @SerializedName("name")
     @Expose
     private String name;
@@ -34,18 +41,6 @@ public class Result implements Serializable {
     @SerializedName("homeworld")
     @Expose
     private String homeworld;
-    @SerializedName("films")
-    @Expose
-    private List<String> films = null;
-    @SerializedName("species")
-    @Expose
-    private List<String> species = null;
-    @SerializedName("vehicles")
-    @Expose
-    private List<String> vehicles = null;
-    @SerializedName("starships")
-    @Expose
-    private List<String> starships = null;
     @SerializedName("created")
     @Expose
     private String created;
@@ -126,38 +121,6 @@ public class Result implements Serializable {
 
     public void setHomeworld(String homeworld) {
         this.homeworld = homeworld;
-    }
-
-    public List<String> getFilms() {
-        return films;
-    }
-
-    public void setFilms(List<String> films) {
-        this.films = films;
-    }
-
-    public List<String> getSpecies() {
-        return species;
-    }
-
-    public void setSpecies(List<String> species) {
-        this.species = species;
-    }
-
-    public List<String> getVehicles() {
-        return vehicles;
-    }
-
-    public void setVehicles(List<String> vehicles) {
-        this.vehicles = vehicles;
-    }
-
-    public List<String> getStarships() {
-        return starships;
-    }
-
-    public void setStarships(List<String> starships) {
-        this.starships = starships;
     }
 
     public String getCreated() {

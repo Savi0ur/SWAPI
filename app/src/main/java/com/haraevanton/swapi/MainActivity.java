@@ -1,11 +1,11 @@
 package com.haraevanton.swapi;
 
+import android.content.Intent;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.AnimationDrawable;
-import android.os.Build;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,12 +15,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.haraevanton.swapi.mvp.model.Result;
+import com.haraevanton.swapi.room.Result;
 import com.haraevanton.swapi.mvp.presenters.MainActivityPresenter;
 import com.haraevanton.swapi.mvp.views.MainActivityView;
 
@@ -29,6 +30,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnTextChanged;
 
 public class MainActivity extends MvpAppCompatActivity implements MainActivityView {
 
@@ -87,7 +89,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainActivityVi
 
     @Override
     public void onGetDataSuccess(List<Result> results) {
-        adapter = new RVAdapter(results);
+        adapter = new RVAdapter(results, mainActivityPresenter);
         rv.setAdapter(adapter);
     }
 
@@ -103,6 +105,27 @@ public class MainActivity extends MvpAppCompatActivity implements MainActivityVi
                     .getDrawable(R.drawable.ic_clear_anim);
             btn_clear.setImageDrawable(drawable);
             drawable.start();
+        }
+    }
+
+    @Override
+    public void animateBackBtnToClear() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            AnimatedVectorDrawable drawable = (AnimatedVectorDrawable) getResources()
+                    .getDrawable(R.drawable.ic_arrow_back_anim_to_clear);
+            btn_clear.setImageDrawable(drawable);
+            drawable.start();
+        }
+    }
+
+    @Override
+    public void animateClearBtnToBack() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            AnimatedVectorDrawable drawable = (AnimatedVectorDrawable) getResources()
+                    .getDrawable(R.drawable.ic_clear_anim_to_back);
+            btn_clear.setImageDrawable(drawable);
+            drawable.start();
+
         }
     }
 
@@ -181,7 +204,19 @@ public class MainActivity extends MvpAppCompatActivity implements MainActivityVi
 
     @OnClick(R.id.btn_clear)
     public void onClearBtnClick() {
-        mainActivityPresenter.onClearButtonClick(edt_search.getText().toString());
+        mainActivityPresenter.onClearButtonClick();
+    }
+
+    @OnClick(R.id.btn_history)
+    public void onHistoryBtnClick() {
+        mainActivityPresenter.onHistoryButtonClick();
+    }
+
+    @OnClick(R.id.iv_api_icon)
+    public void onApiLogoClick(){
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("https://swapi.co/"));
+        startActivity(intent);
     }
 
 }

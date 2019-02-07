@@ -3,6 +3,7 @@ package com.haraevanton.swapi.mvp.model;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.haraevanton.swapi.room.Result;
 
 public class SwapiAnswer {
 
