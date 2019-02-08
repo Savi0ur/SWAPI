@@ -8,7 +8,11 @@ import com.haraevanton.swapi.mvp.views.PersonActivityView;
 public class PersonActivityPresenter extends MvpPresenter<PersonActivityView> {
 
     public PersonActivityPresenter() {
+        getViewState().showPersonInfo();
+    }
 
+    public void onBackBtnClick() {
+        getViewState().backPressed();
     }
 
 }

@@ -12,6 +12,7 @@ import com.haraevanton.swapi.mvp.views.PersonActivityView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class PersonActivity extends MvpAppCompatActivity implements PersonActivityView {
 
@@ -40,6 +41,12 @@ public class PersonActivity extends MvpAppCompatActivity implements PersonActivi
 
         Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/DeathStar.otf");
         txtPersonName.setTypeface(custom_font);
+        txtPerson.setTypeface(custom_font);
+    }
+
+
+    @Override
+    public void showPersonInfo() {
         txtPersonName.setText(result.getName());
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -52,14 +59,17 @@ public class PersonActivity extends MvpAppCompatActivity implements PersonActivi
         stringBuilder.append("Gender: ").append(result.getGender()).append("\n");
         stringBuilder.append("Birth year: ").append(result.getBirthYear()).append("\n");
 
-        txtPerson.setTypeface(custom_font);
-        txtPerson.setText(stringBuilder);
 
+        txtPerson.setText(stringBuilder);
     }
 
-
     @Override
-    public void showPersonInfo(Result result) {
+    public void backPressed() {
+        super.onBackPressed();
+    }
 
+    @OnClick(R.id.btn_back)
+    public void onBackBtnClick(){
+        personActivityPresenter.onBackBtnClick();
     }
 }

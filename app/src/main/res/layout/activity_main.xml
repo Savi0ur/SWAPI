@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:targetApi="lollipop"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -43,7 +44,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginStart="10dp"
                     android:background="?selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_clear_anim"
+                    app:srcCompat="@drawable/ic_clear_anim"
                     tools:ignore="contentDescription" />
 
                 <EditText
@@ -69,7 +70,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="8dp"
                     android:background="?selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_search_anim"
+                    app:srcCompat="@drawable/ic_search_anim"
                     tools:ignore="contentDescription" />
 
                 <ProgressBar

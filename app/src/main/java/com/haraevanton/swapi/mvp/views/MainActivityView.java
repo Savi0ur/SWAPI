@@ -37,4 +37,6 @@ public interface MainActivityView extends MvpView {
 
     void hideKeyboard();
 
+    void backPressed();
+
 }

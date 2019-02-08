@@ -5,6 +5,8 @@ import com.haraevanton.swapi.room.Result;
 
 public interface PersonActivityView extends MvpView {
 
-    void showPersonInfo(Result result);
+    void showPersonInfo();
+
+    void backPressed();
 
 }

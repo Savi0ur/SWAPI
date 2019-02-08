@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -197,6 +198,17 @@ public class MainActivity extends MvpAppCompatActivity implements MainActivityVi
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        mainActivityPresenter.onBackPressed();
+    }
+
+    @Override
+    public void backPressed() {
+        Log.i("truebackpressed", "back pressed");
+        super.onBackPressed();
+    }
+
     @OnClick(R.id.btn_search)
     public void onSearchBtnClick() {
         mainActivityPresenter.onButtonSearchClick(edt_search.getText().toString());
@@ -209,6 +221,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainActivityVi
 
     @OnClick(R.id.btn_history)
     public void onHistoryBtnClick() {
+        Log.i("wtf", "onHistoryBrtClick");
         mainActivityPresenter.onHistoryButtonClick();
     }
 

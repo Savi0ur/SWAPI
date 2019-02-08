@@ -9,6 +9,7 @@ import com.haraevanton.swapi.mvp.views.MainActivityView;
 import com.haraevanton.swapi.service.SwapiAPI;
 import com.haraevanton.swapi.service.SwapiService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -32,6 +33,7 @@ public class MainActivityPresenter extends MvpPresenter<MainActivityView> {
         getViewState().animatePostersImg();
 
         resultRepository = ResultRepository.get();
+        results = new ArrayList<>();
     }
 
     public void uploadData(int page, String characterName) {
@@ -44,8 +46,8 @@ public class MainActivityPresenter extends MvpPresenter<MainActivityView> {
             public void onResponse(Call<SwapiAnswer> call, Response<SwapiAnswer> response) {
                 if (response.body() != null) {
                     personsCounter = response.body().getCount();
-                    if (results == null) {
-                        results = response.body().getResults();
+                    if (results.isEmpty()) {
+                        results.addAll(response.body().getResults());
                         getViewState().onGetDataSuccess(results);
                     } else {
                         results.addAll(response.body().getResults());
@@ -90,9 +92,7 @@ public class MainActivityPresenter extends MvpPresenter<MainActivityView> {
         historyMode = false;
         getViewState().animateSearchBtn();
         query = characterName;
-        if (results != null) {
-            results.clear();
-        }
+        results.clear();
         pageCounter = 1;
         getViewState().hideKeyboard();
         getViewState().showProgressBar();
@@ -120,17 +120,30 @@ public class MainActivityPresenter extends MvpPresenter<MainActivityView> {
     }
 
     public void onHistoryButtonClick() {
-        historyMode = true;
-        if (results != null) {
+        if (!resultRepository.getResults().isEmpty()) {
+            historyMode = true;
             results.clear();
+            results.addAll(resultRepository.getResults());
+            getViewState().onGetDataSuccess(results);
+            getViewState().hidePostersImg();
+            getViewState().showList();
+            getViewState().clearSearchInput();
+            getViewState().animateClearBtnToBack();
+            screenMain = false;
         }
-        results = resultRepository.getResults();
-        getViewState().onGetDataSuccess(results);
-        getViewState().hidePostersImg();
-        getViewState().showList();
-        getViewState().clearSearchInput();
-        getViewState().animateClearBtnToBack();
-        screenMain = false;
+    }
+
+    public void onBackPressed() {
+        if (!screenMain) {
+            getViewState().hideList();
+            getViewState().showPostersImg();
+            historyMode = false;
+            screenMain = true;
+            getViewState().animateBackBtnToClear();
+        } else {
+            getViewState().backPressed();
+        }
     }
 
 }
+
