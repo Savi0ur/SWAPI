@@ -2,10 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:targetApi="lollipop"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:targetApi="lollipop"
+    android:id="@+id/ll_layout">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -102,30 +103,28 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/main_background"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/img_posters"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="center"
-            android:background="@drawable/stars">
-        </ImageView>
+            android:background="@drawable/stars"
+            android:scaleType="center" />
 
         <LinearLayout
             android:id="@+id/button_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:background="@color/colorContainerBg"
+            android:elevation="3dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
             android:paddingHorizontal="30dp"
             android:paddingTop="30dp"
             android:paddingBottom="10dp"
-            android:background="@color/colorContainerBg"
-            android:elevation="3dp"
-            android:orientation="vertical"
-            android:gravity="center_horizontal"
-            app:layout_constraintDimensionRatio="1.6:1"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1.6:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

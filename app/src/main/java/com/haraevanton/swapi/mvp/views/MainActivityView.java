@@ -31,6 +31,12 @@ public interface MainActivityView extends MvpView {
 
     void updateList();
 
+    void showSearchResults(String query, int count);
+
+    void showNoInternetMessage();
+
+    void showSnackBarMessage(String message);
+
     void showProgressBar();
 
     void hideProgressBar();

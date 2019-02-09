@@ -1,24 +1,24 @@
 package com.haraevanton.swapi;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -31,15 +31,16 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnTextChanged;
 
 public class MainActivity extends MvpAppCompatActivity implements MainActivityView {
 
-    public static final String TAG = "swapi.MainActivity";
+    public static final String DIALOG_ABOUT_APP = "AboutAppDialog";
 
     @InjectPresenter
     MainActivityPresenter mainActivityPresenter;
 
+    @BindView(R.id.ll_layout)
+    LinearLayout ll_layout_main;
     @BindView(R.id.rv)
     RecyclerView rv;
     @BindView(R.id.edt_search)
@@ -53,6 +54,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainActivityVi
     @BindView(R.id.img_posters)
     ImageView img_posters;
 
+    private DialogFragment aboutAppDialog;
     private RVAdapter adapter;
     private AnimationDrawable postersAnim;
 
@@ -61,6 +63,8 @@ public class MainActivity extends MvpAppCompatActivity implements MainActivityVi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        aboutAppDialog = new AboutAppDialogFragment();
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         rv.setLayoutManager(linearLayoutManager);
@@ -75,13 +79,13 @@ public class MainActivity extends MvpAppCompatActivity implements MainActivityVi
         rv.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
 
                 int visibleItemCount = linearLayoutManager.getChildCount();
                 int totalItemCount = linearLayoutManager.getItemCount();
                 int firstVisibleItems = linearLayoutManager.findFirstVisibleItemPosition();
 
-                mainActivityPresenter.onRecyclerViewScrolled(visibleItemCount, totalItemCount, firstVisibleItems);
+                mainActivityPresenter.onRecyclerViewScrolled(visibleItemCount, totalItemCount,
+                        firstVisibleItems);
 
             }
         });
@@ -177,6 +181,29 @@ public class MainActivity extends MvpAppCompatActivity implements MainActivityVi
     }
 
     @Override
+    public void showSearchResults(String query, int count) {
+        if (!query.equals("")) {
+            Snackbar.make(ll_layout_main,
+                    getString(R.string.results_message, count, query),
+                    Snackbar.LENGTH_LONG).show();
+        } else {
+            Snackbar.make(ll_layout_main,
+                    getString(R.string.results_for_all_message, count),
+                    Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void showNoInternetMessage() {
+        Snackbar.make(ll_layout_main, R.string.no_internet_message, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void showSnackBarMessage(String message) {
+        Snackbar.make(ll_layout_main, message, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
     public void showProgressBar() {
         progressBar.setVisibility(View.VISIBLE);
         progressBar.setAlpha(1);
@@ -190,12 +217,12 @@ public class MainActivity extends MvpAppCompatActivity implements MainActivityVi
 
     @Override
     public void hideKeyboard() {
-        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-        try {
-            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-        } catch (NullPointerException e) {
-            Log.e(TAG, "hideKeyboard: ", e);
+        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        View view = getCurrentFocus();
+        if (view == null) {
+            view = new View(this);
         }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     @Override
@@ -205,7 +232,6 @@ public class MainActivity extends MvpAppCompatActivity implements MainActivityVi
 
     @Override
     public void backPressed() {
-        Log.i("truebackpressed", "back pressed");
         super.onBackPressed();
     }
 
@@ -221,8 +247,12 @@ public class MainActivity extends MvpAppCompatActivity implements MainActivityVi
 
     @OnClick(R.id.btn_history)
     public void onHistoryBtnClick() {
-        Log.i("wtf", "onHistoryBrtClick");
         mainActivityPresenter.onHistoryButtonClick();
+    }
+
+    @OnClick(R.id.btn_info)
+    public void onAboutAppBtnClick() {
+        aboutAppDialog.show(getSupportFragmentManager(), DIALOG_ABOUT_APP);
     }
 
     @OnClick(R.id.iv_api_icon)

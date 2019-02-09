@@ -2,6 +2,7 @@ package com.haraevanton.swapi.mvp.presenters;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
+import com.haraevanton.swapi.App;
 import com.haraevanton.swapi.mvp.model.ResultRepository;
 import com.haraevanton.swapi.room.Result;
 import com.haraevanton.swapi.mvp.model.SwapiAnswer;
@@ -12,9 +13,10 @@ import com.haraevanton.swapi.service.SwapiService;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 @InjectViewState
 public class MainActivityPresenter extends MvpPresenter<MainActivityView> {
@@ -28,60 +30,87 @@ public class MainActivityPresenter extends MvpPresenter<MainActivityView> {
     private boolean historyMode;
     private boolean screenMain;
     private String query;
+    private CompositeDisposable compositeDisposable;
 
     public MainActivityPresenter() {
         getViewState().animatePostersImg();
 
+        screenMain = true;
         resultRepository = ResultRepository.get();
         results = new ArrayList<>();
+        compositeDisposable = new CompositeDisposable();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        compositeDisposable.clear();
+        resultRepository.onCleared();
     }
 
     public void uploadData(int page, String characterName) {
         SwapiAPI swapiAPI = SwapiService.getSwapiApi();
 
-        Call<SwapiAnswer> call = swapiAPI.getByName(page, characterName);
+        compositeDisposable.add(swapiAPI.getByName(page, characterName)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableObserver<SwapiAnswer>() {
+                    @Override
+                    public void onNext(SwapiAnswer swapiAnswer) {
+                        if (swapiAnswer != null) {
+                            personsCounter = swapiAnswer.getCount();
+                            if (personsCounter > 0) {
+                                if (results.isEmpty()) {
+                                    historyMode = false;
+                                    screenMain = false;
 
-        call.enqueue(new Callback<SwapiAnswer>() {
-            @Override
-            public void onResponse(Call<SwapiAnswer> call, Response<SwapiAnswer> response) {
-                if (response.body() != null) {
-                    personsCounter = response.body().getCount();
-                    if (results.isEmpty()) {
-                        results.addAll(response.body().getResults());
-                        getViewState().onGetDataSuccess(results);
-                    } else {
-                        results.addAll(response.body().getResults());
-                        getViewState().updateList();
+                                    results.addAll(swapiAnswer.getResults());
+
+                                    getViewState().showProgressBar();
+                                    getViewState().hidePostersImg();
+                                    getViewState().showList();
+                                    getViewState().animateClearBtnToBack();
+                                    getViewState().onGetDataSuccess(results);
+                                    getViewState().showSearchResults(query, personsCounter);
+                                } else {
+                                    results.addAll(swapiAnswer.getResults());
+                                    getViewState().updateList();
+                                }
+                            } else {
+                                getViewState().showSearchResults(query, personsCounter);
+                            }
+                            isLoading = false;
+                        }
+                        getViewState().hideProgressBar();
                     }
-                    isLoading = false;
-                }
 
-                getViewState().hideProgressBar();
+                    @Override
+                    public void onError(Throwable e) {
+                        getViewState().hideProgressBar();
+                        getViewState().showSnackBarMessage("Server side error");
+                    }
 
-            }
+                    @Override
+                    public void onComplete() {
 
-            @Override
-            public void onFailure(Call<SwapiAnswer> call, Throwable t) {
-                getViewState().hideProgressBar();
-            }
-        });
+                    }
+                }));
 
     }
 
     public void onRecyclerViewScrolled(int visibleItemCount, int totalItemCount, int firstVisibleItems) {
-
         if (!isLoading && !historyMode) {
             if ((visibleItemCount + firstVisibleItems) >= totalItemCount - 10) {
                 if (results.size() < personsCounter) {
                     isLoading = true;
                     pageCounter++;
+                    getViewState().showProgressBar();
                     uploadData(pageCounter, query);
                 }
             }
         }
 
     }
-
     public void addResultHistory(Result result) {
         if (!resultRepository.isHaveSameResult(result.getName())) {
             resultRepository.addResult(result);
@@ -89,19 +118,17 @@ public class MainActivityPresenter extends MvpPresenter<MainActivityView> {
     }
 
     public void onButtonSearchClick(String characterName) {
-        historyMode = false;
-        getViewState().animateSearchBtn();
-        query = characterName;
-        results.clear();
-        pageCounter = 1;
         getViewState().hideKeyboard();
-        getViewState().showProgressBar();
-        isLoading = true;
-        uploadData(pageCounter, characterName);
-        getViewState().hidePostersImg();
-        getViewState().showList();
-        getViewState().animateClearBtnToBack();
-        screenMain = false;
+        getViewState().animateSearchBtn();
+        if (App.getInstance().isNetworkAvailableAndConnected()) {
+            query = characterName;
+            results.clear();
+            pageCounter = 1;
+            isLoading = true;
+            uploadData(pageCounter, characterName);
+        } else {
+            getViewState().showNoInternetMessage();
+        }
 
     }
 

@@ -5,4 +5,13 @@
     <string name="btn_about">ABOUT</string>
     <string name="txt_powered">powered by</string>
     <string name="txt_swapi">SWAPI</string>
+    <string name="no_internet_message">There is no internet connection</string>
+    <string name="results_message">%1$d results for %2$s</string>
+    <string name="results_for_all_message">%d results for all characters</string>
+
+    <string name="dialog_msg">SWAPI provides information about the characters in the Star Wars universe.
+        \n\nInformation provided by <a href="https://swapi.co/">SWAPI</a>.
+        \n\nThe application was created as an test task.
+        \n\nDeveloped by <a href="https://github.com/Savi0ur">Haraev Anton</a>.</string>
+
 </resources>
