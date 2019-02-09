@@ -1,6 +1,8 @@
 package com.haraevanton.swapi.mvp.views;
 
 import com.arellomobile.mvp.MvpView;
+import com.arellomobile.mvp.viewstate.strategy.SkipStrategy;
+import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 import com.haraevanton.swapi.room.Result;
 
 import java.util.List;
@@ -31,10 +33,13 @@ public interface MainActivityView extends MvpView {
 
     void updateList();
 
+    @StateStrategyType(SkipStrategy.class)
     void showSearchResults(String query, int count);
 
+    @StateStrategyType(SkipStrategy.class)
     void showNoInternetMessage();
 
+    @StateStrategyType(SkipStrategy.class)
     void showSnackBarMessage(String message);
 
     void showProgressBar();

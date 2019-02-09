@@ -185,22 +185,22 @@ public class MainActivity extends MvpAppCompatActivity implements MainActivityVi
         if (!query.equals("")) {
             Snackbar.make(ll_layout_main,
                     getString(R.string.results_message, count, query),
-                    Snackbar.LENGTH_LONG).show();
+                    Snackbar.LENGTH_SHORT).show();
         } else {
             Snackbar.make(ll_layout_main,
                     getString(R.string.results_for_all_message, count),
-                    Snackbar.LENGTH_LONG).show();
+                    Snackbar.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void showNoInternetMessage() {
-        Snackbar.make(ll_layout_main, R.string.no_internet_message, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(ll_layout_main, R.string.no_internet_message, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
     public void showSnackBarMessage(String message) {
-        Snackbar.make(ll_layout_main, message, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(ll_layout_main, message, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override

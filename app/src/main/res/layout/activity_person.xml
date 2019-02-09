@@ -40,7 +40,9 @@
             android:gravity="center"
             android:id="@+id/txt_person_name"
             android:textColor="@color/colorAccent"
-            android:textSize="30sp"/>
+            android:textSize="30sp"
+            tools:ellipsize="end"
+            android:lines="1"/>
 
 
     </android.support.v7.widget.Toolbar>
