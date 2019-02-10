@@ -6,6 +6,7 @@
     <string name="txt_powered">powered by</string>
     <string name="txt_swapi">SWAPI</string>
     <string name="no_internet_message">There is no internet connection</string>
+    <string name="empty_history_message">History is empty</string>
     <string name="results_message">%1$d results for %2$s</string>
     <string name="results_for_all_message">%d results for all characters</string>
 

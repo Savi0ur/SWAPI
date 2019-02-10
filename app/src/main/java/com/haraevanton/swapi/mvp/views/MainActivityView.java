@@ -34,10 +34,16 @@ public interface MainActivityView extends MvpView {
     void updateList();
 
     @StateStrategyType(SkipStrategy.class)
+    void showResultDetail(Result result);
+
+    @StateStrategyType(SkipStrategy.class)
     void showSearchResults(String query, int count);
 
     @StateStrategyType(SkipStrategy.class)
     void showNoInternetMessage();
+
+    @StateStrategyType(SkipStrategy.class)
+    void showEmptyHistoryMessage();
 
     @StateStrategyType(SkipStrategy.class)
     void showSnackBarMessage(String message);

@@ -14,7 +14,7 @@ public interface ResultDao {
     @Query("SELECT * FROM result")
     Single<List<Result>> getAll();
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Result result);
 
 }

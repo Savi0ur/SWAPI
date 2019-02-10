@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,9 +42,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         viewHolder.txtName.setText(results.get(i).getName());
         viewHolder.bind(results.get(i));
-        if (results.size() == 1){
-            viewHolder.showPersonInfo(results.get(0));
-        }
     }
 
     @Override
@@ -81,7 +79,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder> {
         }
 
         public void showPersonInfo(Result result){
-
             mainActivityPresenter.addResultHistory(result);
 
             Intent intent = new Intent(context, PersonActivity.class);

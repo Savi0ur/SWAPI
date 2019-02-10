@@ -2,6 +2,7 @@ package com.haraevanton.swapi;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
@@ -9,7 +10,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -19,6 +21,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -35,6 +38,7 @@ import butterknife.OnClick;
 public class MainActivity extends MvpAppCompatActivity implements MainActivityView {
 
     public static final String DIALOG_ABOUT_APP = "AboutAppDialog";
+    private static final String EXTRA_RESULT = "com.haraevanton.swapi.result";
 
     @InjectPresenter
     MainActivityPresenter mainActivityPresenter;
@@ -55,7 +59,6 @@ public class MainActivity extends MvpAppCompatActivity implements MainActivityVi
     ImageView img_posters;
 
     private DialogFragment aboutAppDialog;
-    private RVAdapter adapter;
     private AnimationDrawable postersAnim;
 
     @Override
@@ -66,8 +69,14 @@ public class MainActivity extends MvpAppCompatActivity implements MainActivityVi
 
         aboutAppDialog = new AboutAppDialogFragment();
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        rv.setLayoutManager(linearLayoutManager);
+
+        GridLayoutManager gridLayoutManager;
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            gridLayoutManager = new GridLayoutManager(this, 1);
+        } else {
+            gridLayoutManager = new GridLayoutManager(this, 2);
+        }
+        rv.setLayoutManager(gridLayoutManager);
 
         edt_search.setOnEditorActionListener(((textView, i, keyEvent) -> {
             if (i == EditorInfo.IME_ACTION_SEARCH) {
@@ -76,13 +85,13 @@ public class MainActivity extends MvpAppCompatActivity implements MainActivityVi
             return false;
         }));
 
-        rv.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
 
-                int visibleItemCount = linearLayoutManager.getChildCount();
-                int totalItemCount = linearLayoutManager.getItemCount();
-                int firstVisibleItems = linearLayoutManager.findFirstVisibleItemPosition();
+                int visibleItemCount = gridLayoutManager.getChildCount();
+                int totalItemCount = gridLayoutManager.getItemCount();
+                int firstVisibleItems = gridLayoutManager.findFirstVisibleItemPosition();
 
                 mainActivityPresenter.onRecyclerViewScrolled(visibleItemCount, totalItemCount,
                         firstVisibleItems);
@@ -94,8 +103,17 @@ public class MainActivity extends MvpAppCompatActivity implements MainActivityVi
 
     @Override
     public void onGetDataSuccess(List<Result> results) {
-        adapter = new RVAdapter(results, mainActivityPresenter);
+        RVAdapter adapter = new RVAdapter(results, mainActivityPresenter);
         rv.setAdapter(adapter);
+    }
+
+    @Override
+    public void showResultDetail(Result result) {
+        mainActivityPresenter.addResultHistory(result);
+
+        Intent intent = new Intent(this, PersonActivity.class);
+        intent.putExtra(EXTRA_RESULT, result);
+        startActivity(intent);
     }
 
     @Override
@@ -146,23 +164,29 @@ public class MainActivity extends MvpAppCompatActivity implements MainActivityVi
 
     @Override
     public void animatePostersImg() {
-        img_posters.setBackgroundResource(R.drawable.posters_animation);
-        postersAnim = (AnimationDrawable) img_posters.getBackground();
-        postersAnim.setEnterFadeDuration(1000);
-        postersAnim.setExitFadeDuration(1000);
-        postersAnim.start();
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            img_posters.setBackgroundResource(R.drawable.posters_animation);
+            postersAnim = (AnimationDrawable) img_posters.getBackground();
+            postersAnim.setEnterFadeDuration(1000);
+            postersAnim.setExitFadeDuration(1000);
+            postersAnim.start();
+        }
     }
 
     @Override
     public void showPostersImg() {
         img_posters.setVisibility(View.VISIBLE);
-        postersAnim.start();
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            postersAnim.start();
+        }
     }
 
     @Override
     public void hidePostersImg() {
         img_posters.setVisibility(View.GONE);
-        postersAnim.stop();
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            postersAnim.stop();
+        }
     }
 
     @Override
@@ -183,24 +207,54 @@ public class MainActivity extends MvpAppCompatActivity implements MainActivityVi
     @Override
     public void showSearchResults(String query, int count) {
         if (!query.equals("")) {
-            Snackbar.make(ll_layout_main,
+            Snackbar snackbar = Snackbar.make(ll_layout_main,
                     getString(R.string.results_message, count, query),
-                    Snackbar.LENGTH_SHORT).show();
+                    Snackbar.LENGTH_LONG);
+            View snackbarView = snackbar.getView();
+            snackbarView.setBackgroundColor(getResources().getColor(R.color.colorContainerBg));
+            TextView textView = snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(getResources().getColor(R.color.colorAccent));
+            snackbar.show();
         } else {
-            Snackbar.make(ll_layout_main,
+            Snackbar snackbar = Snackbar.make(ll_layout_main,
                     getString(R.string.results_for_all_message, count),
-                    Snackbar.LENGTH_SHORT).show();
+                    Snackbar.LENGTH_LONG);
+            View snackbarView = snackbar.getView();
+            snackbarView.setBackgroundColor(getResources().getColor(R.color.colorContainerBg));
+            TextView textView = snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setTextColor(getResources().getColor(R.color.colorAccent));
+            snackbar.show();
         }
     }
 
     @Override
     public void showNoInternetMessage() {
-        Snackbar.make(ll_layout_main, R.string.no_internet_message, Snackbar.LENGTH_SHORT).show();
+        Snackbar snackbar = Snackbar.make(ll_layout_main, R.string.no_internet_message, Snackbar.LENGTH_LONG);
+        View snackbarView = snackbar.getView();
+        snackbarView.setBackgroundColor(getResources().getColor(R.color.colorContainerBg));
+        TextView textView = snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+        textView.setTextColor(getResources().getColor(R.color.colorAccent));
+        snackbar.show();
+    }
+
+    @Override
+    public void showEmptyHistoryMessage() {
+        Snackbar snackbar = Snackbar.make(ll_layout_main, R.string.empty_history_message, Snackbar.LENGTH_LONG);
+        View snackbarView = snackbar.getView();
+        snackbarView.setBackgroundColor(getResources().getColor(R.color.colorContainerBg));
+        TextView textView = snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+        textView.setTextColor(getResources().getColor(R.color.colorAccent));
+        snackbar.show();
     }
 
     @Override
     public void showSnackBarMessage(String message) {
-        Snackbar.make(ll_layout_main, message, Snackbar.LENGTH_SHORT).show();
+        Snackbar snackbar = Snackbar.make(ll_layout_main, message, Snackbar.LENGTH_LONG);
+        View snackbarView = snackbar.getView();
+        snackbarView.setBackgroundColor(getResources().getColor(R.color.colorContainerBg));
+        TextView textView = snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+        textView.setTextColor(getResources().getColor(R.color.colorAccent));
+        snackbar.show();
     }
 
     @Override

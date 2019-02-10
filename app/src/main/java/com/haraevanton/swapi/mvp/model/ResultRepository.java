@@ -5,6 +5,7 @@ import com.haraevanton.swapi.room.Result;
 import com.haraevanton.swapi.room.ResultDao;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -61,6 +62,7 @@ public class ResultRepository {
 
     public void onResultsFetched(List<Result> results){
         resultsHistory.addAll(results);
+        Collections.reverse(resultsHistory);
     }
 
     public List<Result> getResults(){
@@ -68,19 +70,20 @@ public class ResultRepository {
     }
 
     public void addResult(Result r){
-        resultsHistory.add(r);
+        removeSameResult(r);
+        resultsHistory.add(0, r);
         compositeDisposable.add(Observable.just(r)
         .observeOn(Schedulers.io())
         .subscribe(result -> resultDao.insert(r)));
     }
 
-    public boolean isHaveSameResult(String name){
-        for (Result result : resultsHistory){
-            if (result.getName().equals(name)){
-                return true;
+    public void removeSameResult(Result result){
+        for (Result r : resultsHistory){
+            if (r.getName().equals(result.getName())){
+                resultsHistory.remove(r);
+                break;
             }
         }
-        return false;
     }
 
     public void onCleared(){

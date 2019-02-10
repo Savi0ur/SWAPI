@@ -1,7 +1,10 @@
 package com.haraevanton.swapi;
 
+import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
@@ -10,7 +13,10 @@ import com.haraevanton.swapi.room.Result;
 import com.haraevanton.swapi.mvp.presenters.PersonActivityPresenter;
 import com.haraevanton.swapi.mvp.views.PersonActivityView;
 
+import java.util.List;
+
 import butterknife.BindView;
+import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -21,10 +27,26 @@ public class PersonActivity extends MvpAppCompatActivity implements PersonActivi
     @InjectPresenter
     PersonActivityPresenter personActivityPresenter;
 
-    @BindView(R.id.txt_person)
-    TextView txtPerson;
-    @BindView(R.id.txt_person_name)
-    TextView txtPersonName;
+    @BindView(R.id.txt_toolbar_name)
+    TextView txtToolbarName;
+    @BindView(R.id.txt_height_info)
+    TextView txtHeightInfo;
+    @BindView(R.id.txt_name_info)
+    TextView txtNameInfo;
+    @BindView(R.id.txt_mass_info)
+    TextView txtMassInfo;
+    @BindView(R.id.txt_hair_info)
+    TextView txtHairInfo;
+    @BindView(R.id.txt_skin_info)
+    TextView txtSkinInfo;
+    @BindView(R.id.txt_eye_info)
+    TextView txtEyeInfo;
+    @BindView(R.id.txt_gender_info)
+    TextView txtGenderInfo;
+    @BindView(R.id.txt_birth_info)
+    TextView txtBirthInfo;
+    @BindView(R.id.ll)
+    LinearLayout ll;
 
     private Result result;
 
@@ -40,27 +62,31 @@ public class PersonActivity extends MvpAppCompatActivity implements PersonActivi
         }
 
         Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/DeathStar.otf");
-        txtPersonName.setTypeface(custom_font);
-        txtPerson.setTypeface(custom_font);
+
+        txtToolbarName.setTypeface(custom_font);
+
+        for (int i = 0; i < ll.getChildCount(); i++){
+            LinearLayout v = (LinearLayout) ll.getChildAt(i);
+            for (int j = 0; j < v.getChildCount(); j++){
+                TextView txt = (TextView) v.getChildAt(j);
+                txt.setTypeface(custom_font);
+            }
+        }
     }
 
 
     @Override
     public void showPersonInfo() {
-        txtPersonName.setText(result.getName());
+        txtToolbarName.setText(result.getName());
 
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Name: ").append(result.getName()).append("\n\n");
-        stringBuilder.append("Height: ").append(result.getHeight()).append("\n");
-        stringBuilder.append("Mass: ").append(result.getMass()).append("\n");
-        stringBuilder.append("Hair color: ").append(result.getHairColor()).append("\n");
-        stringBuilder.append("Skin color: ").append(result.getSkinColor()).append("\n");
-        stringBuilder.append("Eye color: ").append(result.getEyeColor()).append("\n");
-        stringBuilder.append("Gender: ").append(result.getGender()).append("\n");
-        stringBuilder.append("Birth year: ").append(result.getBirthYear()).append("\n");
-
-
-        txtPerson.setText(stringBuilder);
+        txtNameInfo.setText(result.getName());
+        txtHeightInfo.setText(result.getHeight());
+        txtMassInfo.setText(result.getMass());
+        txtHairInfo.setText(result.getHairColor());
+        txtSkinInfo.setText(result.getSkinColor());
+        txtEyeInfo.setText(result.getEyeColor());
+        txtGenderInfo.setText(result.getGender());
+        txtBirthInfo.setText(result.getBirthYear());
     }
 
     @Override

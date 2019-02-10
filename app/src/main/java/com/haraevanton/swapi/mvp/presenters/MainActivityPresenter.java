@@ -65,13 +65,14 @@ public class MainActivityPresenter extends MvpPresenter<MainActivityView> {
                                     screenMain = false;
 
                                     results.addAll(swapiAnswer.getResults());
-
-                                    getViewState().showProgressBar();
                                     getViewState().hidePostersImg();
                                     getViewState().showList();
                                     getViewState().animateClearBtnToBack();
                                     getViewState().onGetDataSuccess(results);
                                     getViewState().showSearchResults(query, personsCounter);
+                                    if (personsCounter == 1){
+                                        getViewState().showResultDetail(results.get(0));
+                                    }
                                 } else {
                                     results.addAll(swapiAnswer.getResults());
                                     getViewState().updateList();
@@ -112,20 +113,21 @@ public class MainActivityPresenter extends MvpPresenter<MainActivityView> {
 
     }
     public void addResultHistory(Result result) {
-        if (!resultRepository.isHaveSameResult(result.getName())) {
             resultRepository.addResult(result);
-        }
     }
 
     public void onButtonSearchClick(String characterName) {
         getViewState().hideKeyboard();
         getViewState().animateSearchBtn();
         if (App.getInstance().isNetworkAvailableAndConnected()) {
-            query = characterName;
-            results.clear();
-            pageCounter = 1;
-            isLoading = true;
-            uploadData(pageCounter, characterName);
+            if (!isLoading) {
+                getViewState().showProgressBar();
+                query = characterName;
+                results.clear();
+                pageCounter = 1;
+                isLoading = true;
+                uploadData(pageCounter, characterName);
+            }
         } else {
             getViewState().showNoInternetMessage();
         }
@@ -157,7 +159,10 @@ public class MainActivityPresenter extends MvpPresenter<MainActivityView> {
             getViewState().clearSearchInput();
             getViewState().animateClearBtnToBack();
             screenMain = false;
+        } else {
+            getViewState().showEmptyHistoryMessage();
         }
+        getViewState().hideKeyboard();
     }
 
     public void onBackPressed() {
