@@ -5,6 +5,8 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
+import com.haraevanton.swapi.mvp.model.Result;
+
 import java.util.List;
 import io.reactivex.Single;
 

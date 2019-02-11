@@ -1,31 +1,35 @@
 package com.haraevanton.swapi;
 
 import android.app.Application;
-import android.arch.persistence.room.Room;
 import android.net.ConnectivityManager;
 
-import com.haraevanton.swapi.room.AppDatabase;
+import com.haraevanton.swapi.di.AppComponent;
+import com.haraevanton.swapi.di.DaggerAppComponent;
+import com.haraevanton.swapi.di.modules.ApiModule;
+import com.haraevanton.swapi.di.modules.DbModule;
 
 public class App extends Application {
 
+    private static final String BASE_URL = "https://swapi.co/";
+
     public static App instance;
-
-    private AppDatabase database;
-
+    private static AppComponent appComponent;
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
-        database = Room.databaseBuilder(this, AppDatabase.class, AppDatabase.DATABASE_NAME)
-                .build();
+
+        appComponent = DaggerAppComponent.builder()
+                .apiModule(new ApiModule(BASE_URL))
+                .dbModule(new DbModule(getApplicationContext())).build();
     }
 
     public static App getInstance(){
         return instance;
     }
 
-    public AppDatabase getDatabase(){
-        return database;
+    public AppComponent getAppComponent(){
+        return appComponent;
     }
 
     public boolean isNetworkAvailableAndConnected(){

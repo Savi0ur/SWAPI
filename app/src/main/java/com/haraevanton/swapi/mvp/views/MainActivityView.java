@@ -3,7 +3,7 @@ package com.haraevanton.swapi.mvp.views;
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.SkipStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
-import com.haraevanton.swapi.room.Result;
+import com.haraevanton.swapi.mvp.model.Result;
 
 import java.util.List;
 
@@ -31,7 +31,9 @@ public interface MainActivityView extends MvpView {
 
     void hideList();
 
-    void updateList();
+    void updateAdapterItemMoved(int position);
+
+    void updateAdapter();
 
     @StateStrategyType(SkipStrategy.class)
     void showResultDetail(Result result);

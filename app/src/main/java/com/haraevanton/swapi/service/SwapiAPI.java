@@ -9,7 +9,7 @@ import retrofit2.http.Query;
 
 public interface SwapiAPI {
 
-    @GET("people/")
+    @GET("/api/people/")
     Observable<SwapiAnswer> getByName(@Query("page") int page, @Query("search") String characterName);
 
 }

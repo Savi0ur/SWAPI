@@ -1,4 +1,4 @@
-package com.haraevanton.swapi;
+package com.haraevanton.swapi.ui;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -25,7 +24,8 @@ import android.widget.TextView;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.haraevanton.swapi.room.Result;
+import com.haraevanton.swapi.R;
+import com.haraevanton.swapi.mvp.model.Result;
 import com.haraevanton.swapi.mvp.presenters.MainActivityPresenter;
 import com.haraevanton.swapi.mvp.views.MainActivityView;
 
@@ -38,7 +38,7 @@ import butterknife.OnClick;
 public class MainActivity extends MvpAppCompatActivity implements MainActivityView {
 
     public static final String DIALOG_ABOUT_APP = "AboutAppDialog";
-    private static final String EXTRA_RESULT = "com.haraevanton.swapi.result";
+    public static final String EXTRA_RESULT = "Result";
 
     @InjectPresenter
     MainActivityPresenter mainActivityPresenter;
@@ -200,8 +200,17 @@ public class MainActivity extends MvpAppCompatActivity implements MainActivityVi
     }
 
     @Override
-    public void updateList() {
-        rv.getAdapter().notifyDataSetChanged();
+    public void updateAdapter() {
+        if (rv.getAdapter() != null) {
+            rv.getAdapter().notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void updateAdapterItemMoved(int position) {
+        if (rv.getAdapter() != null) {
+            rv.getAdapter().notifyItemMoved(position, 0);
+        }
     }
 
     @Override

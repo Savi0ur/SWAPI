@@ -1,12 +1,15 @@
 package com.haraevanton.swapi.mvp.model;
 
+import android.util.Log;
+
 import com.haraevanton.swapi.App;
-import com.haraevanton.swapi.room.Result;
 import com.haraevanton.swapi.room.ResultDao;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -16,9 +19,12 @@ import io.reactivex.schedulers.Schedulers;
 
 public class ResultRepository {
 
+    private static final String TAG = "ResultRepository";
+
     private static ResultRepository resultRepository;
 
-    private ResultDao resultDao;
+    @Inject
+    ResultDao resultDao;
 
     private List<Result> resultsHistory;
 
@@ -34,7 +40,7 @@ public class ResultRepository {
 
     private ResultRepository(){
 
-        resultDao = App.getInstance().getDatabase().resultDao();
+        App.getInstance().getAppComponent().injectRepository(this);
 
         compositeDisposable = new CompositeDisposable();
 
@@ -47,7 +53,7 @@ public class ResultRepository {
         dbGetAll();
     }
 
-    public void dbGetAll(){
+    private void dbGetAll(){
         Disposable disposable = resultDao.getAll()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -56,11 +62,11 @@ public class ResultRepository {
         compositeDisposable.add(disposable);
     }
 
-    public void onError(Throwable throwable){
-        //TODO onError
+    private void onError(Throwable throwable){
+        Log.e(TAG, throwable.getMessage());
     }
 
-    public void onResultsFetched(List<Result> results){
+    private void onResultsFetched(List<Result> results){
         resultsHistory.addAll(results);
         Collections.reverse(resultsHistory);
     }
@@ -77,7 +83,7 @@ public class ResultRepository {
         .subscribe(result -> resultDao.insert(r)));
     }
 
-    public void removeSameResult(Result result){
+    private void removeSameResult(Result result){
         for (Result r : resultsHistory){
             if (r.getName().equals(result.getName())){
                 resultsHistory.remove(r);

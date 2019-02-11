@@ -1,4 +1,4 @@
-package com.haraevanton.swapi.room;
+package com.haraevanton.swapi.mvp.model;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
@@ -38,18 +38,6 @@ public class Result implements Serializable {
     @SerializedName("gender")
     @Expose
     private String gender;
-    @SerializedName("homeworld")
-    @Expose
-    private String homeworld;
-    @SerializedName("created")
-    @Expose
-    private String created;
-    @SerializedName("edited")
-    @Expose
-    private String edited;
-    @SerializedName("url")
-    @Expose
-    private String url;
 
     public String getName() {
         return name;
@@ -113,38 +101,6 @@ public class Result implements Serializable {
 
     public void setGender(String gender) {
         this.gender = gender;
-    }
-
-    public String getHomeworld() {
-        return homeworld;
-    }
-
-    public void setHomeworld(String homeworld) {
-        this.homeworld = homeworld;
-    }
-
-    public String getCreated() {
-        return created;
-    }
-
-    public void setCreated(String created) {
-        this.created = created;
-    }
-
-    public String getEdited() {
-        return edited;
-    }
-
-    public void setEdited(String edited) {
-        this.edited = edited;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
 }

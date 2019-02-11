@@ -1,11 +1,14 @@
-package com.haraevanton.swapi;
+package com.haraevanton.swapi.ui;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
+
+import com.haraevanton.swapi.R;
 
 public class AboutAppDialogFragment extends DialogFragment {
 
@@ -15,6 +18,7 @@ public class AboutAppDialogFragment extends DialogFragment {
         ((TextView) getDialog().findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 

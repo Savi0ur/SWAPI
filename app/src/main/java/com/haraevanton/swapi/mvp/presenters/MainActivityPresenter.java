@@ -1,17 +1,21 @@
 package com.haraevanton.swapi.mvp.presenters;
 
+import android.util.Log;
+
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.haraevanton.swapi.App;
 import com.haraevanton.swapi.mvp.model.ResultRepository;
-import com.haraevanton.swapi.room.Result;
+import com.haraevanton.swapi.mvp.model.Result;
 import com.haraevanton.swapi.mvp.model.SwapiAnswer;
 import com.haraevanton.swapi.mvp.views.MainActivityView;
 import com.haraevanton.swapi.service.SwapiAPI;
-import com.haraevanton.swapi.service.SwapiService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -21,7 +25,12 @@ import io.reactivex.schedulers.Schedulers;
 @InjectViewState
 public class MainActivityPresenter extends MvpPresenter<MainActivityView> {
 
-    private ResultRepository resultRepository;
+    private static final String TAG = "MainActivityPresenter";
+
+    @Inject
+    ResultRepository resultRepository;
+    @Inject
+    SwapiAPI swapiAPI;
 
     private List<Result> results;
     private int pageCounter = 1;
@@ -33,10 +42,11 @@ public class MainActivityPresenter extends MvpPresenter<MainActivityView> {
     private CompositeDisposable compositeDisposable;
 
     public MainActivityPresenter() {
+        App.getInstance().getAppComponent().injectMainPresenter(this);
+
         getViewState().animatePostersImg();
 
         screenMain = true;
-        resultRepository = ResultRepository.get();
         results = new ArrayList<>();
         compositeDisposable = new CompositeDisposable();
     }
@@ -48,52 +58,49 @@ public class MainActivityPresenter extends MvpPresenter<MainActivityView> {
         resultRepository.onCleared();
     }
 
-    public void uploadData(int page, String characterName) {
-        SwapiAPI swapiAPI = SwapiService.getSwapiApi();
-
+    private void uploadData(int page, String characterName) {
         compositeDisposable.add(swapiAPI.getByName(page, characterName)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableObserver<SwapiAnswer>() {
                     @Override
                     public void onNext(SwapiAnswer swapiAnswer) {
-                        if (swapiAnswer != null) {
-                            personsCounter = swapiAnswer.getCount();
-                            if (personsCounter > 0) {
-                                if (results.isEmpty()) {
-                                    historyMode = false;
-                                    screenMain = false;
+                        personsCounter = swapiAnswer.getCount();
+                        if (personsCounter > 0) {
+                            if (results.isEmpty()) {
+                                historyMode = false;
+                                screenMain = false;
 
-                                    results.addAll(swapiAnswer.getResults());
-                                    getViewState().hidePostersImg();
-                                    getViewState().showList();
-                                    getViewState().animateClearBtnToBack();
-                                    getViewState().onGetDataSuccess(results);
-                                    getViewState().showSearchResults(query, personsCounter);
-                                    if (personsCounter == 1){
-                                        getViewState().showResultDetail(results.get(0));
-                                    }
-                                } else {
-                                    results.addAll(swapiAnswer.getResults());
-                                    getViewState().updateList();
+                                results.addAll(swapiAnswer.getResults());
+                                getViewState().hidePostersImg();
+                                getViewState().showList();
+                                getViewState().animateClearBtnToBack();
+                                getViewState().onGetDataSuccess(results);
+                                getViewState().showSearchResults(query, personsCounter);
+                                if (personsCounter == 1) {
+                                    getViewState().showResultDetail(results.get(0));
                                 }
                             } else {
-                                getViewState().showSearchResults(query, personsCounter);
+                                results.addAll(swapiAnswer.getResults());
+                                getViewState().updateAdapter();
                             }
-                            isLoading = false;
+                        } else {
+                            getViewState().showSearchResults(query, personsCounter);
                         }
-                        getViewState().hideProgressBar();
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        isLoading = false;
                         getViewState().hideProgressBar();
-                        getViewState().showSnackBarMessage("Server side error");
+                        getViewState().showSnackBarMessage(e.getMessage());
+                        Log.e(TAG, e.getMessage());
                     }
 
                     @Override
                     public void onComplete() {
-
+                        isLoading = false;
+                        getViewState().hideProgressBar();
                     }
                 }));
 
@@ -112,8 +119,20 @@ public class MainActivityPresenter extends MvpPresenter<MainActivityView> {
         }
 
     }
+
     public void addResultHistory(Result result) {
-            resultRepository.addResult(result);
+        resultRepository.addResult(result);
+        if (historyMode){
+            for (int i = 0; i < results.size(); i++){
+                if (results.get(i).getName().equals(result.getName())){
+                        for (int j = i; j > 0; j--) {
+                            Collections.swap(results, j, j - 1);
+                        }
+                    getViewState().updateAdapterItemMoved(i);
+                    break;
+                }
+            }
+        }
     }
 
     public void onButtonSearchClick(String characterName) {

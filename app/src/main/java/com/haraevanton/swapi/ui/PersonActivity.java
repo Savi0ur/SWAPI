@@ -1,28 +1,22 @@
-package com.haraevanton.swapi;
+package com.haraevanton.swapi.ui;
 
-import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.haraevanton.swapi.room.Result;
+import com.haraevanton.swapi.R;
+import com.haraevanton.swapi.mvp.model.Result;
 import com.haraevanton.swapi.mvp.presenters.PersonActivityPresenter;
 import com.haraevanton.swapi.mvp.views.PersonActivityView;
 
-import java.util.List;
-
 import butterknife.BindView;
-import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class PersonActivity extends MvpAppCompatActivity implements PersonActivityView {
-
-    private static final String EXTRA_RESULT = "com.haraevanton.swapi.result";
 
     @InjectPresenter
     PersonActivityPresenter personActivityPresenter;
@@ -58,7 +52,7 @@ public class PersonActivity extends MvpAppCompatActivity implements PersonActivi
 
         Bundle arguments = getIntent().getExtras();
         if (arguments != null){
-            result = (Result) arguments.getSerializable(EXTRA_RESULT);
+            result = (Result) arguments.getSerializable(MainActivity.EXTRA_RESULT);
         }
 
         Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/DeathStar.otf");

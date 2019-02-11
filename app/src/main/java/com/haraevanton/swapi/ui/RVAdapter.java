@@ -1,4 +1,4 @@
-package com.haraevanton.swapi;
+package com.haraevanton.swapi.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -6,14 +6,14 @@ import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.haraevanton.swapi.R;
 import com.haraevanton.swapi.mvp.presenters.MainActivityPresenter;
-import com.haraevanton.swapi.room.Result;
+import com.haraevanton.swapi.mvp.model.Result;
 
 import java.util.List;
 
@@ -51,8 +51,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private static final String EXTRA_RESULT = "com.haraevanton.swapi.result";
-
         @BindView(R.id.cv)
         CardView cv;
         @BindView(R.id.txt_name)
@@ -82,7 +80,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ViewHolder> {
             mainActivityPresenter.addResultHistory(result);
 
             Intent intent = new Intent(context, PersonActivity.class);
-            intent.putExtra(EXTRA_RESULT, result);
+            intent.putExtra(MainActivity.EXTRA_RESULT, result);
             context.startActivity(intent);
         }
 
