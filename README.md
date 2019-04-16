@@ -7,8 +7,8 @@ SWAPI предоставляет информацию о персонажах в
 
 ## Using  libraries
 
-* [ButterKnife](https://github.com/JakeWharton/butterknife) [Site](https://jakewharton.github.io/butterknife/)
-* [Retrofit](https://github.com/square/retrofit) [Site](http://square.github.io/retrofit/)
+* [ButterKnife](https://github.com/JakeWharton/butterknife) ([Site](https://jakewharton.github.io/butterknife/))
+* [Retrofit](https://github.com/square/retrofit) ([Site](http://square.github.io/retrofit/))
 * [Moxy](https://github.com/Arello-Mobile/Moxy)
 * [Room]()
 * [Dagger](https://github.com/google/dagger)
